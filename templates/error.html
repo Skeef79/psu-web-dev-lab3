@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+    <link href="{{url_for('static',filename='css/bootstrap.min.css')}}" rel="stylesheet" />
+    <title>Мини-почта</title>
+</head>
+
+<body>
+    <div class="d-flex flex-column bg-light min-vh-100">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand mx-auto" href="/">📨 Мини-почта 📨</a>
+            </div>
+        </nav>
+
+        <main class="container flex-fill my-3">
+            <div class="card-text" style="font-size: large;">Message {{messageId}} was not found</div>
+        </main>
+
+        <footer class="bg-dark text-light py-3">
+            <div class="container text-center">
+                Лабораторная работа по курсу Web-программирования. Выполнено студентом Игорь Субботин ПМИ-3
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>
