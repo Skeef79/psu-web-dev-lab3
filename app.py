@@ -1,5 +1,4 @@
-from types import MethodDescriptorType
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy, model
 import os
 
@@ -29,47 +28,61 @@ class MessageModel(db.Model):
     claps = db.Column(db.Integer, default=0)
 
 
-def validate(message, author):
-    return len(author) > 0 and len(author) <= 30 and len(message) > 0 and len(message) <= 1000
-
-
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/messages', methods=['GET', 'POST'])
-def messages():
-    error = None
-    if request.method == 'POST':
-        sender = request.form['sender']
-        message = request.form['message']
-
-        if not validate(message,  sender):
-            error = "Имя отправителя должно быть от 1 до 30 символов, а текст сообщения от 1 до 1000 символов"
-        else:
-            new_message = MessageModel(author=sender, message=message)
-            db.session.add(new_message)
-            db.session.commit()
-            return redirect("/messages")
-
+@app.get('/')
+def index():
     messages = MessageModel.query.order_by(MessageModel.claps.desc()).all()
-    return render_template('index.html', messages=messages, error=error)
+    return render_template('index.html', messages=messages)
 
 
-@app.route('/messages/<int:messageId>', methods=['GET'])
+@app.post('/')
+def add_message():
+    errors = []
+
+    if not request.form['sender']:
+        errors.append('Требуется ввести имя отправителя')
+
+    if not request.form['message']:
+        errors.append('Требуется ввести сообщение')
+
+    sender = request.form['sender']
+    message = request.form['message']
+
+    if sender and len(sender) > 30:
+        errors.append('Имя автора должно быть от 1 до 30 символов')
+    if message and len(message) > 1000:
+        errors.append('Текст сообщения должен быть от 1 до 1000 символов')
+
+    if errors:
+        messages = MessageModel.query.order_by(MessageModel.claps.desc()).all()
+        return render_template('index.html',
+                               messages=messages,
+                               errors=errors,
+                               new_sender=sender,
+                               new_message=message
+                               )
+
+    db.session.add(MessageModel(author=sender, message=message))
+    db.session.commit()
+    return redirect(url_for('index'))
+
+
+@app.get('/messages/<int:messageId>')
 def message_page(messageId):
     message = MessageModel.query.filter_by(id=messageId).first()
     if not message:
-        return render_template('error.html', messageId=messageId)
+        return render_template('404.html', messageId=messageId)
 
     return render_template('message.html', message=message)
 
 
-@app.route('/messages/<int:messageId>/claps', methods=['POST'])
+@app.post('/messages/<int:messageId>/claps')
 def clap_message(messageId):
     message = MessageModel.query.filter_by(id=messageId).first()
     if not message:
-        return f'Message {messageId} was not found'
+        return render_template('404.html', messageId=messageId)
     message.claps += 1
     db.session.commit()
-    return redirect('/messages')
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':

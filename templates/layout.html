@@ -15,17 +15,10 @@
                 <a class="navbar-brand mx-auto" href="/">📨 Мини-почта 📨</a>
             </div>
         </nav>
-
-        <main class="container flex-fill my-3">
-            <div class="card-text" style="font-size: large;">Message {{messageId}} was not found</div>
-        </main>
-
+        {% block main %} {% endblock %}
         <footer class="bg-dark text-light py-3">
             <div class="container text-center">
                 Лабораторная работа по курсу Web-программирования. Выполнено студентом Игорь Субботин ПМИ-3
             </div>
         </footer>
     </div>
-</body>
-
-</html>
