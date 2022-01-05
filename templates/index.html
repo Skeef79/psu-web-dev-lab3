@@ -4,11 +4,9 @@
         <fieldset>
             <legend class="card-header h5 border-secondary bg-dark text-light">📩 Отправить письмо</legend>
             <div class="card-body">
-                {% if errors %}
+                {% if error %}
                 <div class="mb-3" data-test="send-alert">
-                    {% for error in errors %}
                     <div class="alert alert-danger">{{error}}</div>
-                    {% endfor %}
                 </div>
                 {% endif %}
 
@@ -29,7 +27,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="message" class="form-label">Сообщение:</label>
-                    <textarea id="message" name="message" class="form-control" placeholder="Текст сообщения" value="{{new_message}}"></textarea>
+                    <textarea id="message" name="message" class="form-control" placeholder="Текст сообщения">{{new_message}}</textarea>
                 </div>
                 <div class="d-flex">
                     <button class="btn btn-outline-success ms-auto">✏️ Отправить</button>

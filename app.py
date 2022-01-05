@@ -36,27 +36,30 @@ def index():
 
 @app.post('/')
 def add_message():
-    errors = []
-
+    
+    error = ""
     if not request.form['sender']:
-        errors.append('Требуется ввести имя отправителя')
+        error = 'Требуется ввести имя отправителя'
 
     if not request.form['message']:
-        errors.append('Требуется ввести сообщение')
+        error = 'Требуется ввести сообщение'
 
     sender = request.form['sender']
     message = request.form['message']
 
     if sender and len(sender) > 30:
-        errors.append('Имя автора должно быть от 1 до 30 символов')
+        error = 'Имя автора должно быть от 1 до 30 символов'
     if message and len(message) > 1000:
-        errors.append('Текст сообщения должен быть от 1 до 1000 символов')
+        error = 'Текст сообщения должен быть от 1 до 1000 символов'
 
-    if errors:
+    print(sender)
+    print(message)
+    
+    if error:
         messages = MessageModel.query.order_by(MessageModel.claps.desc()).all()
         return render_template('index.html',
                                messages=messages,
-                               errors=errors,
+                               error=error,
                                new_sender=sender,
                                new_message=message
                                )
